@@ -23,5 +23,8 @@ export class User extends Document {
 
   @Prop()
   refreshToken: string;
+
+  @Prop()
+  sessionKey: string;
 }
 export const UserSchema = SchemaFactory.createForClass(User);

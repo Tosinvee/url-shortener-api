@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schema/user.schema';
 import { FilterQuery, Model } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class UserService {
@@ -10,16 +11,22 @@ export class UserService {
     @InjectModel(User.name) private readonly userModel: Model<User>,
   ) {}
 
+  generateSessionToken() {
+    return crypto.randomBytes(32).toString('hex');
+  }
+
   async hashedPasword(password: string) {
     const salt = await bcrypt.genSalt();
     return await bcrypt.hash(password, salt);
   }
 
   async create(body: Partial<User>): Promise<User> {
-    return await new this.userModel({
+    const user = new this.userModel({
       ...body,
       password: await this.hashedPasword(body.password),
-    }).save();
+      sessionKey: this.generateSessionToken(),
+    });
+    return await user.save();
   }
 
   async getUser(query: FilterQuery<User>) {
