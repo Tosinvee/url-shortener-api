@@ -4,7 +4,7 @@ import Redis from 'ioredis';
 import { Model } from 'mongoose';
 import { ShortUrl } from './schema/short-url.schema';
 import * as bcrypt from 'bcryptjs';
-import { randomBase62 } from 'src/utils/base62';
+import { randomBase62 } from 'src/utils/cutomAlias';
 
 const redis = new Redis(process.env.REDIS_URL);
 @Injectable()
