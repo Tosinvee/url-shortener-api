@@ -6,6 +6,7 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { environment } from './environments/environment';
+import { ShortUrlModule } from './short-url/short-url.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { environment } from './environments/environment';
     MongooseModule.forRoot(environment.mongoURI),
     UserModule,
     AuthModule,
+    ShortUrlModule,
   ],
   controllers: [AppController],
   providers: [AppService],
