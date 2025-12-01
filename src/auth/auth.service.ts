@@ -56,13 +56,23 @@ export class AuthService {
     return this.jwtService.decode(token) as TokenPayload;
   }
 
-  getTokenOptions(type: 'access' | 'refresh', user: User) {
-    const secret = environment[type + 'TokenSecret'] + user.sessionKey;
-    const options: JwtSignOptions = { secret };
+  getTokenOptions(type: 'access' | 'refresh', user: User): JwtSignOptions {
+    const secret =
+      type === 'access'
+        ? environment.jwtAccessTokenSecret + user.sessionKey
+        : environment.jwtRefreshTokenSecret + user.sessionKey;
 
-    const expiration = environment[type + 'TokenExpiration'];
-    if (expiration) options.expiresIn = expiration;
-    return options;
+    const expiresIn =
+      type === 'access'
+        ? environment.jwtAccessTokenExpiration
+        : environment.jwtRefreshTokenExpiration;
+
+    return {
+      secret,
+      expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRATION
+        ? Number(process.env.JWT_ACCESS_TOKEN_EXPIRATION)
+        : 36000,
+    };
   }
 
   getAccessTokenSecret(user: User) {

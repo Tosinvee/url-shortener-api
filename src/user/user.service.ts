@@ -4,6 +4,7 @@ import { User } from './schema/user.schema';
 import { FilterQuery, Model } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 import * as crypto from 'crypto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -34,6 +35,15 @@ export class UserService {
     if (!user) {
       return null;
     }
+    return user;
+  }
+
+  async updateUser(id: string, body: UpdateUserDto): Promise<User> {
+    const user = await this.userModel.findByIdAndUpdate(
+      id,
+      { $set: body },
+      { new: true },
+    );
     return user;
   }
 }

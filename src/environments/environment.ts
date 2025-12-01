@@ -8,6 +8,6 @@ export const environment = {
   mongoURI: env.DATABASE_URL,
   jwtAccessTokenSecret: env.JWT_ACCESS_TOKEN_SECRET,
   jwtRefreshTokenSecret: env.JWT_REFRESH_TOKEN_SECRET,
-  jwtAccessTokenExpiration: env.JWT_ACCESS_TOKEN_EXPIRATION,
+  jwtAccessTokenExpiration: Number(env.JWT_ACCESS_TOKEN_EXPIRATION),
   jwtRefreshTokenExpiration: env.JWT_REFRESH_TOKEN_EXPIRATION,
 };

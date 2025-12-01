@@ -7,7 +7,7 @@ export class User extends Document {
   firstName: string;
 
   @Prop()
-  LastName: string;
+  lastName: string;
 
   @Prop({ unique: true, required: true })
   email: string;
@@ -22,7 +22,16 @@ export class User extends Document {
   phoneNumber: string;
 
   @Prop()
-  refreshToken: string;
+  state?: string;
+
+  @Prop()
+  city?: string;
+
+  @Prop()
+  profilePictureUri: string;
+
+  @Prop()
+  country: string;
 
   @Prop()
   sessionKey: string;
