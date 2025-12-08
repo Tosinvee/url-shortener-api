@@ -1,4 +1,14 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
+  Post,
+  Req,
+  Res,
+} from '@nestjs/common';
+import { Request, Response } from 'express';
 import { ShortUrlService } from './short-url.service';
 import { CreateShortUrlDto } from './dto/create-short-url.dto';
 
@@ -19,5 +29,23 @@ export class ShortUrlController {
       original_url: result.originalUrl,
       expiresAt: result.expiresAt,
     };
+  }
+
+  @Get(':code')
+  async redirect(
+    @Param('code') code: string,
+    @Res() res: Response,
+    @Req() req: Request,
+  ) {
+    const redirectResult = await this.shortUrlService.findAlias(code);
+
+    this.shortUrlService
+      .enqueueClick(code, {
+        ip: req.ip,
+        userAgent: req.headers['user-agent'] || '',
+        referer: req.headers['referer'] || '',
+      })
+      .catch((err) => console.error('Failed to enqueue click event', err));
+    return res.redirect(HttpStatus.FOUND, redirectResult);
   }
 }
