@@ -7,6 +7,7 @@ import { ShortUrl, ShortUrlSchema } from './schema/short-url.schema';
 import { ClickEvent, ClickEventSchema } from './schema/click-event.schema';
 import { BullModule } from '@nestjs/bullmq';
 import { ShortUrlProcessor } from './short-url.processor';
+import { environment } from 'src/environments/environment';
 
 @Module({
   imports: [
@@ -27,7 +28,7 @@ import { ShortUrlProcessor } from './short-url.processor';
       },
     }),
     BullModule.registerQueue({
-      name: 'click-events',
+      name: environment.queue.CLICK_EVENTS,
     }),
   ],
   providers: [ShortUrlService, ShortUrlProcessor],

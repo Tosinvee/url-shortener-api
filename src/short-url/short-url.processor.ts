@@ -4,8 +4,10 @@ import { Model, Types } from 'mongoose';
 import { ShortUrl } from './schema/short-url.schema';
 import { ShortUrlService } from './short-url.service';
 import { Logger } from '@nestjs/common';
+import { environment } from 'src/environments/environment';
 
-@Processor('click-events')
+const { CLICK_EVENTS } = environment.queue;
+@Processor(CLICK_EVENTS)
 export class ShortUrlProcessor extends WorkerHost {
   private readonly logger: Logger;
   constructor(

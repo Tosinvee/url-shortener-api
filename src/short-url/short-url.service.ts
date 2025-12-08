@@ -12,6 +12,9 @@ import { randomBase62 } from 'src/utils/cutomAlias';
 import { ClickEvent } from './schema/click-event.schema';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
+import { environment } from 'src/environments/environment';
+
+const { CLICK_EVENTS } = environment.queue;
 
 const redis = new Redis(process.env.REDIS_URL);
 @Injectable()
@@ -19,13 +22,12 @@ export class ShortUrlService {
   constructor(
     @InjectModel(ShortUrl.name) private shortUrlModel: Model<ShortUrl>,
     @InjectModel(ClickEvent.name) private clickEventModel: Model<ClickEvent>,
-    @InjectQueue('click-events') private clickQueue: Queue,
+    @InjectQueue(CLICK_EVENTS) private clickQueue: Queue,
   ) {}
 
   private CODE_LENGTH = 6;
   private MAX_GENERATE_ATTEMPTS = 6;
 
-  // Create a short URL
   async create(
     originalUrl: string,
     customAlias?: string,
@@ -36,12 +38,10 @@ export class ShortUrlService {
     let code: string;
 
     if (customAlias) {
-      // Check if custom alias exists
       const exists = await this.shortUrlModel.findOne({ code: customAlias });
       if (exists) throw new BadRequestException('Alias already taken');
       code = customAlias;
     } else {
-      // Generate a unique random code
       for (let i = 0; i < this.MAX_GENERATE_ATTEMPTS; i++) {
         code = randomBase62(this.CODE_LENGTH);
         const exists = await this.shortUrlModel.findOne({ code });
@@ -65,15 +65,12 @@ export class ShortUrlService {
 
     await result.save();
 
-    // Cache in Redis for 7 days
     await redis.set(`short:${code}`, originalUrl, 'EX', 86400 * 7);
 
     return result;
   }
 
-  // Find URL by code
   async findAlias(code: string) {
-    // Try Redis cache first
     const cached = await redis.get(`short:${code}`);
     if (cached) return cached;
 
