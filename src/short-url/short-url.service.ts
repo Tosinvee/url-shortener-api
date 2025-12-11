@@ -13,6 +13,7 @@ import { ClickEvent } from './schema/click-event.schema';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { environment } from 'src/environments/environment';
+import * as geoip from 'geoip-lite';
 
 const { CLICK_EVENTS } = environment.queue;
 
@@ -98,9 +99,12 @@ export class ShortUrlService {
       { $inc: { clickCount: 1 }, $set: { lastClickAt: new Date() } },
     );
 
+    const geo = geoip.lookup(meta.ip || '');
+    const country = geo ? geo.country : 'Unknown';
+
     await this.clickQueue.add(
       'record_click',
-      { code, meta },
+      { code, meta: { ...meta, country } },
       { removeOnComplete: true },
     );
   }
@@ -115,5 +119,28 @@ export class ShortUrlService {
     });
 
     await event.save();
+  }
+
+  async getAnalytics(code: string) {
+    const result = await this.shortUrlModel.findOne({ code });
+    if (!result) throw new NotFoundException('Not found');
+
+    const clicks = result.clickCount;
+    const lastClickAt = result.lastClickAt;
+
+    const geo = await this.clickEventModel.aggregate([
+      { $match: { shortUrlId: result._id } },
+      { $group: { _id: '$country', count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+    ]);
+    const geography = {};
+    geo.forEach((g) => (geography[g.id || 'unknown'] = g.count));
+    return {
+      short_url: `${process.env.BASE_URL}/${code}`,
+      original_url: result.originalUrl,
+      clicks,
+      lastClickAt,
+      geography,
+    };
   }
 }

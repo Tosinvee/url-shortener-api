@@ -31,6 +31,12 @@ export class ShortUrlController {
     };
   }
 
+  @Get('/api/analytics/:code')
+  async getAnalytics(@Param('code') code: string) {
+    const analytics = await this.shortUrlService.getAnalytics(code);
+    return analytics;
+  }
+
   @Get(':code')
   async redirect(
     @Param('code') code: string,
