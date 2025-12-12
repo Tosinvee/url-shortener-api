@@ -19,7 +19,6 @@ import {
   NotificationSchema,
 } from 'src/notification/notification.schema';
 import { FirebaseService } from 'src/firebase/firebase.service';
-//import { NotificationProcessor } from 'src/notification/notification.processor';
 
 @Module({
   imports: [
@@ -51,6 +50,5 @@ import { FirebaseService } from 'src/firebase/firebase.service';
     NotificationProcessor,
     FirebaseService,
   ],
-  exports: [],
 })
 export class WorkerModule {}
