@@ -16,7 +16,8 @@ export const environment = {
     port: Number(env.REDIS_PORT) || 6379,
   },
 
-  queue: {
+  queues: {
     CLICK_EVENTS: 'click-events',
+    NOTIFICATION: 'notification',
   },
 };

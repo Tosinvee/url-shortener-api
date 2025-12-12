@@ -15,7 +15,7 @@ import { Queue } from 'bullmq';
 import { environment } from 'src/environments/environment';
 import * as geoip from 'geoip-lite';
 
-const { CLICK_EVENTS } = environment.queue;
+const { CLICK_EVENTS } = environment.queues;
 
 const redis = new Redis(process.env.REDIS_URL);
 @Injectable()

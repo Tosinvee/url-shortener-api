@@ -2,6 +2,9 @@
 /dist
 /node_modules
 /build
+/konnectBase-firebase-config.json
+/url-shortner-firebase-config.json
+/src/url-shortner-firebase-config.json
 
 # Logs
 logs

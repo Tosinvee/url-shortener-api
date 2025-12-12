@@ -1,12 +1,12 @@
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { ShortUrl } from './schema/short-url.schema';
-import { ShortUrlService } from './short-url.service';
+import { ShortUrl } from '../short-url/schema/short-url.schema';
+import { ShortUrlService } from '../short-url/short-url.service';
 import { Logger } from '@nestjs/common';
 import { environment } from 'src/environments/environment';
 
-const { CLICK_EVENTS } = environment.queue;
+const { CLICK_EVENTS } = environment.queues;
 @Processor(CLICK_EVENTS)
 export class ShortUrlProcessor extends WorkerHost {
   private readonly logger: Logger;
