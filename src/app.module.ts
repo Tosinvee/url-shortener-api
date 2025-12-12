@@ -11,6 +11,7 @@ import { NotificationModule } from './notification/notification.module';
 import { FirebaseModule } from './firebase/firebase.module';
 import { WorkerModule } from './worker/worker.module';
 import { BullModule } from '@nestjs/bullmq';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
