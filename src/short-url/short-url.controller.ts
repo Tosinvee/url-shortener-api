@@ -1,18 +1,22 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   Param,
   Post,
   Req,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { ShortUrlService } from './short-url.service';
 import { CreateShortUrlDto } from './dto/create-short-url.dto';
+import { JwtGuard } from 'src/auth/guard/jwt.guard';
 
 @Controller('short-url')
+@UseGuards(JwtGuard)
 export class ShortUrlController {
   constructor(private readonly shortUrlService: ShortUrlService) {}
 
@@ -53,5 +57,11 @@ export class ShortUrlController {
       })
       .catch((err) => console.error('Failed to enqueue click event', err));
     return res.redirect(HttpStatus.FOUND, redirectResult);
+  }
+
+  @Delete(':code')
+  async deleteShortUrl(@Param('code') code: string) {
+    await this.shortUrlService.delete(code);
+    return { message: 'Short URL deleted successfully' };
   }
 }

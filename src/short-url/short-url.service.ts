@@ -143,4 +143,9 @@ export class ShortUrlService {
       geography,
     };
   }
+
+  async delete(code: string) {
+    await this.shortUrlModel.updateOne({ code }, { isDeleted: true });
+    await redis.del(`short:${code}`);
+  }
 }
