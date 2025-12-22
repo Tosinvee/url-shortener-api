@@ -1,24 +1,20 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as firebaseAdmin from 'firebase-admin';
-import { ConfigService } from '@nestjs/config';
+import * as serviceAccount from '../../url-shortner-firebase-config.json';
 
 @Injectable()
 export class FirebaseService {
   private static firebaseApp: firebaseAdmin.app.App;
   private logger: Logger;
-  private serviceAccount: firebaseAdmin.ServiceAccount;
-  constructor(private readonly configService: ConfigService) {
+
+  constructor() {
     this.logger = new Logger(FirebaseService.name);
-    const config = JSON.parse(
-      this.configService.get<string>('FIREBASE_CREDENTIALS'),
-    );
     if (!FirebaseService.firebaseApp) {
       FirebaseService.firebaseApp = firebaseAdmin.initializeApp({
         credential: firebaseAdmin.credential.cert(
-          (this.serviceAccount = config as firebaseAdmin.ServiceAccount),
+          serviceAccount as firebaseAdmin.ServiceAccount,
         ),
       });
-      this.logger.log('Firebase initialized successfully');
     }
   }
 
