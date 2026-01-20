@@ -102,6 +102,7 @@ export class AuthService {
 
   async refreshToken(refreshToken: string) {
     const decodedToken = this.jwtService.decode(refreshToken) as TokenPayload;
+    console.log('DECODED:', decodedToken);
     if (!decodedToken) {
       throw new UnauthorizedException('Invalid Token');
     }

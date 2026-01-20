@@ -94,11 +94,6 @@ export class ShortUrlService {
       country?: string;
     },
   ) {
-    await this.shortUrlModel.updateOne(
-      { code },
-      { $inc: { clickCount: 1 }, $set: { lastClickAt: new Date() } },
-    );
-
     const geo = geoip.lookup(meta.ip || '');
     const country = geo ? geo.country : 'Unknown';
 
@@ -134,7 +129,7 @@ export class ShortUrlService {
       { $sort: { count: -1 } },
     ]);
     const geography = {};
-    geo.forEach((g) => (geography[g.id || 'unknown'] = g.count));
+    geo.forEach((g) => (geography[g._id || 'unknown'] = g.count));
     return {
       short_url: `${process.env.BASE_URL}/${code}`,
       original_url: result.originalUrl,

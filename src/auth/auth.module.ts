@@ -16,7 +16,7 @@ import { ConfigModule } from '@nestjs/config';
     PassportModule.register({ defaultStrategy: 'jwt' }),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     JwtModule.register({}),
-    forwardRef(() => UserModule), // <-- import UserModule to get UserService
+    forwardRef(() => UserModule),
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, LocalStrategy, JwtService],

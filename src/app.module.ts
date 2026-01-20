@@ -7,11 +7,8 @@ import { AuthModule } from './auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { environment } from './environments/environment';
 import { ShortUrlModule } from './short-url/short-url.module';
-import { NotificationModule } from './notification/notification.module';
-import { FirebaseModule } from './firebase/firebase.module';
 import { WorkerModule } from './worker/worker.module';
 import { BullModule } from '@nestjs/bullmq';
-import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -28,8 +25,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
     UserModule,
     AuthModule,
     ShortUrlModule,
-    NotificationModule,
-    FirebaseModule,
+
     WorkerModule,
   ],
   controllers: [AppController],

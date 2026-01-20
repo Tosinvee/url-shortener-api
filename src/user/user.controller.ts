@@ -35,17 +35,17 @@ export class UserController {
     return user;
   }
 
-  @Post('register-fcm-token')
-  @UseGuards(JwtGuard)
-  @ApiOperation({ summary: 'Subscribe user to FCM topic' })
-  @ApiResponse({ status: 200, description: 'Subscribed to topic successfully' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @Patch('subscribe-topic')
-  async subscribeToTopic(
-    @CurrentUser() user: User,
-    @Body('token') token: string,
-  ) {
-    await this.userService.subscribeUserToTopic(user.id, token);
-    return { message: 'Subscribed to topic successfully' };
-  }
+  // @Post('register-fcm-token')
+  // @UseGuards(JwtGuard)
+  // @ApiOperation({ summary: 'Subscribe user to FCM topic' })
+  // @ApiResponse({ status: 200, description: 'Subscribed to topic successfully' })
+  // @ApiResponse({ status: 401, description: 'Unauthorized' })
+  // @Patch('subscribe-topic')
+  // async subscribeToTopic(
+  //   @CurrentUser() user: User,
+  //   @Body('token') token: string,
+  // ) {
+  //   await this.userService.subscribeUserToTopic(user.id, token);
+  //   return { message: 'Subscribed to topic successfully' };
+  // }
 }

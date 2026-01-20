@@ -5,13 +5,11 @@ import { FilterQuery, Model } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 import * as crypto from 'crypto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { FirebaseService } from 'src/firebase/firebase.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
-    private readonly firebaseService: FirebaseService,
   ) {}
 
   generateSessionToken() {
@@ -47,9 +45,5 @@ export class UserService {
       { new: true },
     );
     return user;
-  }
-
-  async subscribeUserToTopic(userId: string, token: string) {
-    return this.firebaseService.subscribeUserToTopic(userId, token);
   }
 }
