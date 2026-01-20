@@ -29,6 +29,15 @@ export class ShortUrlService {
   private CODE_LENGTH = 6;
   private MAX_GENERATE_ATTEMPTS = 6;
 
+  private async generateUniqueCode(): Promise<string> {
+    for (let i = 0; i < 6; i++) {
+      const code = randomBase62(this.CODE_LENGTH);
+      const exists = await this.shortUrlModel.exists({ code });
+      if (!exists) return code;
+    }
+    throw new Error('Failed to generate unique code');
+  }
+
   async create(
     originalUrl: string,
     customAlias?: string,
@@ -39,19 +48,12 @@ export class ShortUrlService {
     let code: string;
 
     if (customAlias) {
-      const exists = await this.shortUrlModel.findOne({ code: customAlias });
+      const exists = await this.shortUrlModel.exists({ code: customAlias });
       if (exists) throw new BadRequestException('Alias already taken');
       code = customAlias;
     } else {
-      for (let i = 0; i < this.MAX_GENERATE_ATTEMPTS; i++) {
-        code = randomBase62(this.CODE_LENGTH);
-        const exists = await this.shortUrlModel.findOne({ code });
-        if (!exists) break;
-        if (i === this.MAX_GENERATE_ATTEMPTS - 1)
-          throw new Error('Failed to generate unique code');
-      }
+      code = await this.generateUniqueCode();
     }
-
     const hashedPassword = password
       ? await bcrypt.hash(password, 10)
       : undefined;
