@@ -8,8 +8,10 @@ export const environment = {
   mongoURI: env.DATABASE_URL,
   jwtAccessTokenSecret: env.JWT_ACCESS_TOKEN_SECRET,
   jwtRefreshTokenSecret: env.JWT_REFRESH_TOKEN_SECRET,
-  jwtAccessTokenExpiration: Number(env.JWT_ACCESS_TOKEN_EXPIRATION),
-  jwtRefreshTokenExpiration: env.JWT_REFRESH_TOKEN_EXPIRATION,
+  jwtAccessTokenExpiration: Number(env.JWT_ACCESS_TOKEN_EXPIRATION) || 36000,
+  jwtRefreshTokenExpiration: env.JWT_REFRESH_TOKEN_EXPIRATION_MS
+    ? Math.floor(Number(env.JWT_REFRESH_TOKEN_EXPIRATION_MS) / 1000)
+    : Number(env.JWT_REFRESH_TOKEN_EXPIRATION) || 604800,
 
   redis: {
     host: env.REDIS_HOST,

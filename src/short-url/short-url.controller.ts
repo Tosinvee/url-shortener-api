@@ -23,13 +23,13 @@ import {
 } from '@nestjs/swagger';
 
 @ApiTags('ShortUrl')
-@ApiBearerAuth()
 @Controller('short-url')
-@UseGuards(JwtGuard)
 export class ShortUrlController {
   constructor(private readonly shortUrlService: ShortUrlService) {}
 
   @Post('api/shorten')
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard)
   @ApiOperation({ summary: 'Create a short URL' })
   @ApiResponse({
     status: 201,
@@ -57,6 +57,8 @@ export class ShortUrlController {
   }
 
   @Get('/api/analytics/:code')
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard)
   @ApiOperation({ summary: 'Get analytics for a short URL' })
   @ApiParam({
     name: 'code',
@@ -100,6 +102,8 @@ export class ShortUrlController {
   }
 
   @Delete(':code')
+  @ApiBearerAuth()
+  @UseGuards(JwtGuard)
   @ApiOperation({ summary: 'Delete a short URL' })
   @ApiParam({
     name: 'code',

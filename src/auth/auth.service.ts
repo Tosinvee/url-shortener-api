@@ -4,13 +4,12 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
-import { SignupDto } from './dto/singup.dto';
+import { SignupDto } from './dto/signup.dto';
 import { compare } from 'bcryptjs';
 import { User } from 'src/user/schema/user.schema';
 import { ConfigService } from '@nestjs/config';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { TokenPayload } from './interface/token.interface';
-import { session } from 'passport';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { randomUUID } from 'crypto';
@@ -69,9 +68,7 @@ export class AuthService {
 
     return {
       secret,
-      expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRATION
-        ? Number(process.env.JWT_ACCESS_TOKEN_EXPIRATION)
-        : 36000,
+      expiresIn,
     };
   }
 
@@ -102,7 +99,6 @@ export class AuthService {
 
   async refreshToken(refreshToken: string) {
     const decodedToken = this.jwtService.decode(refreshToken) as TokenPayload;
-    console.log('DECODED:', decodedToken);
     if (!decodedToken) {
       throw new UnauthorizedException('Invalid Token');
     }

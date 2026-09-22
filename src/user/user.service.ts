@@ -38,6 +38,13 @@ export class UserService {
     return user;
   }
 
+  getPublicUser(user: User | null) {
+    if (!user) return null;
+    const { password, sessionKey, ...safeUser } =
+      user.toObject ? user.toObject() : user;
+    return safeUser;
+  }
+
   async updateUser(id: string, body: UpdateUserDto): Promise<User> {
     const user = await this.userModel.findByIdAndUpdate(
       id,

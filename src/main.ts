@@ -3,11 +3,21 @@ import { AppModule } from './app.module';
 import * as dotenv from 'dotenv';
 import { environment } from './environments/environment';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
 
 dotenv.config();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      transformOptions: { enableImplicitConversion: true },
+    }),
+  );
+
   const port = process.env.PORT || environment.port || 3000;
 
   const config = new DocumentBuilder()

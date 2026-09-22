@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { ConfigModule } from '@nestjs/config';
 import { AppService } from './app.service';
@@ -9,12 +10,19 @@ import { environment } from './environments/environment';
 import { ShortUrlModule } from './short-url/short-url.module';
 import { WorkerModule } from './worker/worker.module';
 import { BullModule } from '@nestjs/bullmq';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 60,
+      },
+    ]),
     BullModule.forRoot({
       connection: {
         host: process.env.REDIS_HOST,
@@ -29,6 +37,6 @@ import { BullModule } from '@nestjs/bullmq';
     WorkerModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule {}

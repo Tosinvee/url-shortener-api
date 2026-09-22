@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class UpdateUserDto {
   @IsString()
@@ -25,7 +25,7 @@ export class UpdateUserDto {
   @IsString()
   profilePictureUri: string;
 
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
   country: string;
 }
