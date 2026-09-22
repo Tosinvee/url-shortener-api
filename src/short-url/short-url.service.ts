@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import Redis from 'ioredis';
@@ -68,12 +69,14 @@ export class ShortUrlService {
 
     await result.save();
 
-    await redis.set(`short:${code}`, originalUrl, 'EX', 86400 * 7);
+    if (!result.passwordHash) {
+      await redis.set(`short:${code}`, originalUrl, 'EX', 86400 * 7);
+    }
 
     return result;
   }
 
-  async findAlias(code: string) {
+  async findAlias(code: string, password?: string) {
     const cached = await redis.get(`short:${code}`);
     if (cached) return cached;
 
@@ -81,6 +84,15 @@ export class ShortUrlService {
     if (!result) throw new NotFoundException('Not found');
     if (result.expiresAt && result.expiresAt < new Date())
       throw new NotFoundException('Expired');
+
+    if (result.passwordHash) {
+      if (!password) {
+        throw new UnauthorizedException('This link is password protected.');
+      }
+      const matched = await bcrypt.compare(password, result.passwordHash);
+      if (!matched) throw new UnauthorizedException('Invalid password.');
+      return result.originalUrl;
+    }
 
     await redis.set(`short:${code}`, result.originalUrl, 'EX', 86400);
 

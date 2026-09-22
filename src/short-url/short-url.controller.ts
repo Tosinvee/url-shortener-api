@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Query,
   Req,
   Res,
   UseGuards,
@@ -18,6 +19,7 @@ import {
   ApiBearerAuth,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -80,16 +82,26 @@ export class ShortUrlController {
     name: 'code',
     example: 'abc123',
   })
+  @ApiQuery({
+    name: 'password',
+    required: false,
+    description: 'Password required for protected links',
+  })
   @ApiResponse({
     status: 302,
     description: 'Redirects to the original URL',
   })
+  @ApiResponse({
+    status: 401,
+    description: 'Password required or incorrect',
+  })
   async redirect(
     @Param('code') code: string,
+    @Query('password') password: string,
     @Res() res: Response,
     @Req() req: Request,
   ) {
-    const redirectResult = await this.shortUrlService.findAlias(code);
+    const redirectResult = await this.shortUrlService.findAlias(code, password);
 
     this.shortUrlService
       .enqueueClick(code, {
